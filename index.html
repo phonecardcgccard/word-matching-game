@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>单词匹配游戏</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- 添加预加载 -->
+    <link rel="preload" href="assets/success.mp3" as="audio">
+    <link rel="preload" href="assets/error.mp3" as="audio">
 </head>
 <body>
     <div class="game-container">
@@ -37,9 +40,14 @@
     <audio id="errorSound" src="assets/error.mp3"></audio>
     
     <!-- 引入依赖库 -->
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <!-- 添加加载提示 -->
+    <div id="loadingIndicator" style="display: none;">
+        加载中...
+    </div>
     
-    <!-- 引入游戏脚本 -->
-    <script src="game.js"></script>
+    <!-- 优化脚本加载顺序 -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js" defer></script>
+    <script src="defaultWords.js"></script>
+    <script src="game.js" defer></script>
 </body>
 </html>
