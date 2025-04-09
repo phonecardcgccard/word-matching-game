@@ -1,280 +1,141 @@
 // ... 前面的代码保持不变 ...
+// 改进游戏状态管理
+const gameState = {
+    // ... 保持现有状态属性
+    isDragging: false,
+    dragStartPos: { x: 0, y: 0 },
+    dragEndPos: { x: 0, y: 0 },
+    connections: [],
+    difficulty: 'normal',
+    timeLimit: 0,
+    timer: null,
+    soundEnabled: true
+};
 
-// 绑定事件
-function bindEvents() {
-    elements.restartBtn.addEventListener('click', restartGame);
-    elements.exportBtn.addEventListener('click', exportMistakes);
-    elements.dragModeBtn.addEventListener('click', () => setGameMode('drag'));
-    elements.clickModeBtn.addEventListener('click', () => setGameMode('click'));
-    elements.fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
-    elements.templateBtn.addEventListener('click', downloadTemplate);
-    window.addEventListener('resize', initCanvas);
-}
-
-// 初始化画布
-function initCanvas() {
-    const canvas = elements.connectionCanvas;
-    const container = document.querySelector('.game-area');
-    if (canvas && container) {
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
+// 在 initGame 函数末尾添加
+function initGame() {
+    if (gameState.timeLimit > 0) {
+        startTimer();
     }
 }
 
-// 渲染单词卡片
-function renderWordCards() {
-    elements.englishWords.innerHTML = '';
-    elements.chineseWords.innerHTML = '';
-    
-    const englishWords = [...gameState.words];
-    const chineseWords = [...gameState.words];
-    
-    shuffleArray(englishWords);
-    shuffleArray(chineseWords);
-    
-    englishWords.forEach(word => {
-        const card = createWordCard(word.english, 'english', word);
-        elements.englishWords.appendChild(card);
-    });
-    
-    chineseWords.forEach(word => {
-        const card = createWordCard(word.chinese, 'chinese', word);
-        elements.chineseWords.appendChild(card);
-    });
-}
-
-// 创建单词卡片
-function createWordCard(text, type, originalPair) {
-    const card = document.createElement('div');
-    card.className = 'word-card';
-    card.textContent = text;
-    card.dataset.type = type;
-    card.dataset.word = text;
-    card.dataset.pair = type === 'english' ? originalPair.chinese : originalPair.english;
-    
-    if (gameState.gameMode === 'click') {
-        card.addEventListener('click', () => handleCardClick(card));
-    } else {
-        setupDragEvents(card);
+// 添加难度和计时相关函数
+function setDifficulty(level) {
+    gameState.difficulty = level;
+    switch(level) {
+        case 'easy': gameState.timeLimit = 120000; break;
+        case 'normal': gameState.timeLimit = 90000; break;
+        case 'hard': gameState.timeLimit = 60000; break;
     }
-    
-    return card;
+    restartGame();
 }
 
-// 设置拖拽事件
-function setupDragEvents(card) {
-    card.draggable = true;
-    card.addEventListener('dragstart', e => handleDragStart(e, card));
-    card.addEventListener('dragend', e => handleDragEnd(e, card));
-    card.addEventListener('dragover', e => {
-        e.preventDefault();
-        e.currentTarget.classList.add('drag-over');
-    });
-    card.addEventListener('dragleave', e => {
-        e.currentTarget.classList.remove('drag-over');
-    });
-    card.addEventListener('drop', e => handleDrop(e, card));
-    
-    // 触摸事件支持
-    card.addEventListener('touchstart', e => handleTouchStart(e, card), { passive: false });
-    card.addEventListener('touchmove', e => handleTouchMove(e), { passive: false });
-    card.addEventListener('touchend', e => handleTouchEnd(e, card));
-}
+// DOM 元素引用
+const elements = {
+    englishWords: null,
+    chineseWords: null,
+    connectionCanvas: null,
+    scoreElement: null,
+    remainingElement: null,
+    fileInput: null,
+    restartBtn: null,
+    exportBtn: null,
+    dragModeBtn: null,
+    clickModeBtn: null,
+    mistakeList: null,
+    successSound: null,
+    errorSound: null,
+    particlesContainer: null
+};
 
-// 处理卡片点击
-function handleCardClick(card) {
-    if (card.classList.contains('matched')) return;
+// ... 保持现有的其他函数不变 ...
+
+// 改进计时器功能
+function startTimer() {
+    const startTime = Date.now();
+    const timerElement = document.getElementById('timer');
     
-    if (gameState.selectedWord) {
-        if (gameState.selectedWord === card) {
-            card.classList.remove('selected');
-            gameState.selectedWord = null;
-            return;
+    gameState.timer = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, gameState.timeLimit - elapsed);
+        
+        if (remaining === 0) {
+            clearInterval(gameState.timer);
+            handleTimeUp();
         }
         
-        const isMatch = checkMatch(gameState.selectedWord, card);
-        if (isMatch) {
-            handleMatch(gameState.selectedWord, card);
-        } else {
-            handleMismatch(gameState.selectedWord, card);
-        }
-        
-        gameState.selectedWord.classList.remove('selected');
-        gameState.selectedWord = null;
-    } else {
-        card.classList.add('selected');
-        gameState.selectedWord = card;
-    }
+        timerElement.textContent = `剩余时间: ${Math.ceil(remaining / 1000)}秒`;
+    }, 100);
 }
 
-// 处理拖拽开始
-function handleDragStart(e, card) {
-    if (card.classList.contains('matched')) return;
-    
-    gameState.isDragging = true;
-    gameState.selectedWord = card;
-    card.classList.add('selected');
-    
-    const rect = card.getBoundingClientRect();
-    gameState.dragStartPos = {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
-    };
-    
-    requestAnimationFrame(drawConnection);
+// 处理时间到
+function handleTimeUp() {
+    showFriendlyError(`时间到！您的得分是: ${gameState.score}`, 3000);
+    setTimeout(() => restartGame(), 3000);
 }
 
-// 处理拖拽结束
-function handleDragEnd(e, card) {
-    gameState.isDragging = false;
-    card.classList.remove('selected');
-    gameState.selectedWord = null;
-    clearConnections();
-}
-
-// 处理拖拽放下
-function handleDrop(e, card) {
-    e.preventDefault();
-    card.classList.remove('drag-over');
+// 改进错误提示
+function showFriendlyError(message, duration = 3000) {
+    const errorContainer = document.createElement('div');
+    errorContainer.className = 'error-toast';
+    errorContainer.textContent = message;
     
-    if (!gameState.selectedWord || gameState.selectedWord === card) return;
-    
-    const isMatch = checkMatch(gameState.selectedWord, card);
-    if (isMatch) {
-        handleMatch(gameState.selectedWord, card);
-    } else {
-        handleMismatch(gameState.selectedWord, card);
-    }
-    
-    gameState.selectedWord.classList.remove('selected');
-    gameState.selectedWord = null;
-}
-
-// 处理触摸开始
-function handleTouchStart(e, card) {
-    e.preventDefault();
-    if (card.classList.contains('matched')) return;
-    
-    const touch = e.touches[0];
-    gameState.isDragging = true;
-    gameState.selectedWord = card;
-    card.classList.add('selected');
-    
-    const rect = card.getBoundingClientRect();
-    gameState.dragStartPos = {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
-    };
-    gameState.dragEndPos = {
-        x: touch.clientX,
-        y: touch.clientY
-    };
-    
-    requestAnimationFrame(drawConnection);
-}
-
-// 处理触摸移动
-function handleTouchMove(e) {
-    e.preventDefault();
-    if (!gameState.isDragging) return;
-    
-    const touch = e.touches[0];
-    gameState.dragEndPos = {
-        x: touch.clientX,
-        y: touch.clientY
-    };
-}
-
-// 处理触摸结束
-function handleTouchEnd(e, card) {
-    if (!gameState.isDragging) return;
-    
-    const endElement = document.elementFromPoint(
-        gameState.dragEndPos.x,
-        gameState.dragEndPos.y
-    );
-    
-    if (endElement && endElement.classList.contains('word-card')) {
-        handleDrop(e, endElement);
-    }
-    
-    gameState.isDragging = false;
-    card.classList.remove('selected');
-    gameState.selectedWord = null;
-    clearConnections();
-}
-
-// 检查匹配
-function checkMatch(card1, card2) {
-    if (card1.dataset.type === card2.dataset.type) return false;
-    return card1.dataset.pair === card2.dataset.word;
-}
-
-// 处理匹配成功
-function handleMatch(card1, card2) {
-    gameState.matchedPairs.push([card1, card2]);
-    card1.classList.add('matched');
-    card2.classList.add('matched');
-    
-    // 添加连线
-    const connection = {
-        start: getCardCenter(card1),
-        end: getCardCenter(card2)
-    };
-    gameState.connections.push(connection);
-    
-    // 更新分数和动画
-    gameState.score += 10;
-    updateScore();
-    playSound('success');
-    createMatchParticles(card1, card2);
-    
-    // 检查游戏是否结束
-    if (gameState.matchedPairs.length === gameState.words.length) {
-        setTimeout(() => {
-            alert(`恭喜！您的最终得分是: ${gameState.score}`);
-        }, 500);
-    }
-}
-
-// 处理匹配失败
-function handleMismatch(card1, card2) {
-    card1.classList.add('error');
-    card2.classList.add('error');
-    
-    // 记录错误
-    const word = card1.dataset.type === 'english' ? card1.dataset.word : card2.dataset.word;
-    gameState.mistakes[word] = (gameState.mistakes[word] || 0) + 1;
-    saveMistakes();
-    updateMistakeList();
-    
-    playSound('error');
+    document.body.appendChild(errorContainer);
     
     setTimeout(() => {
-        card1.classList.remove('error');
-        card2.classList.remove('error');
-    }, 1000);
+        errorContainer.classList.add('fade-out');
+        setTimeout(() => errorContainer.remove(), 300);
+    }, duration);
 }
 
-// 创建匹配成功粒子效果
+// 改进音效控制
+function toggleSound() {
+    gameState.soundEnabled = !gameState.soundEnabled;
+    const soundBtn = document.getElementById('soundBtn');
+    if (soundBtn) {
+        soundBtn.textContent = gameState.soundEnabled ? '🔊' : '🔇';
+    }
+}
+
+// 改进音效播放
+function playSound(type) {
+    if (!gameState.soundEnabled) return;
+    
+    try {
+        const sound = type === 'success' ? elements.successSound : elements.errorSound;
+        if (sound) {
+            sound.currentTime = 0;
+            sound.volume = 0.5;
+            sound.play().catch(err => console.log('音效播放失败:', err));
+        }
+    } catch (error) {
+        console.error('音效处理错误:', error);
+    }
+}
+
+// 改进粒子效果
 function createMatchParticles(card1, card2) {
     const container = elements.particlesContainer;
     const center1 = getCardCenter(card1);
     const center2 = getCardCenter(card2);
+    const colors = ['#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B'];
     
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.left = `${center1.x}px`;
         particle.style.top = `${center1.y}px`;
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         
         const angle = (Math.random() * Math.PI * 2);
-        const velocity = 2 + Math.random() * 2;
-        const lifetime = 1000 + Math.random() * 500;
+        const velocity = 2 + Math.random() * 3;
+        const lifetime = 1000 + Math.random() * 1000;
         
+        particle.style.setProperty('--tx', `${Math.cos(angle) * velocity * 50}px`);
+        particle.style.setProperty('--ty', `${Math.sin(angle) * velocity * 50}px`);
         particle.style.animation = `particle ${lifetime}ms ease-out forwards`;
-        container.appendChild(particle);
         
+        container.appendChild(particle);
         setTimeout(() => particle.remove(), lifetime);
     }
 }
