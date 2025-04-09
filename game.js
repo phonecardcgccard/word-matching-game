@@ -13,25 +13,66 @@ const gameState = {
 };
 
 // 初始化游戏
+// 优化初始化函数
 function initGame() {
     console.log('开始初始化游戏...');
     
     try {
-        setupElements();
-        initCanvas();
-        gameState.words = [...defaultWords];
-        shuffleArray(gameState.words);
-        gameState.words = gameState.words.slice(0, 10);
-        renderWordCards();
-        updateScore();
-        loadMistakes();
-        bindEvents();
+        // 显示加载提示
+        document.getElementById('loadingIndicator').style.display = 'block';
         
-        console.log('游戏初始化完成');
+        // 异步初始化
+        Promise.all([
+            setupElements(),
+            initCanvas(),
+            loadAudioResources()
+        ]).then(() => {
+            gameState.words = [...defaultWords];
+            shuffleArray(gameState.words);
+            gameState.words = gameState.words.slice(0, 10);
+            renderWordCards();
+            updateScore();
+            loadMistakes();
+            bindEvents();
+            
+            console.log('游戏初始化完成');
+        }).catch(error => {
+            console.error('游戏初始化失败:', error);
+            showFriendlyError('游戏加载过程中出现错误，请刷新页面重试。');
+        }).finally(() => {
+            // 隐藏加载提示
+            document.getElementById('loadingIndicator').style.display = 'none';
+        });
     } catch (error) {
         console.error('游戏初始化失败:', error);
         showFriendlyError('游戏加载过程中出现错误，请刷新页面重试。');
     }
+}
+
+// 加载音频资源
+function loadAudioResources() {
+    return new Promise((resolve, reject) => {
+        const audioFiles = [
+            { id: 'successSound', src: 'assets/success.mp3' },
+            { id: 'errorSound', src: 'assets/error.mp3' }
+        ];
+        
+        let loadedCount = 0;
+        
+        audioFiles.forEach(audio => {
+            const element = document.getElementById(audio.id);
+            if (element) {
+                element.addEventListener('canplaythrough', () => {
+                    loadedCount++;
+                    if (loadedCount === audioFiles.length) {
+                        resolve();
+                    }
+                }, { once: true });
+                
+                element.addEventListener('error', reject);
+            }
+        });
+    });
 }
 
 // 初始化画布
@@ -238,4 +279,23 @@ function handleXlsxFile(e) {
         gameState.words = words;
         restartGame();
     }
+}
+
+// 播放音效
+function playSound(type) {
+    try {
+        const sound = type === 'success' ? elements.successSound : elements.errorSound;
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(err => console.log('音效播放失败:', err));
+        }
+    } catch (error) {
+        console.error('音效处理错误:', error);
+    }
+}
+
+// 检查匹配
+function checkMatch(card1, card2) {
+    if (card1.dataset.type === card2.dataset.type) return false;
+    return card1.dataset.pair === card2.dataset.word;
 }
