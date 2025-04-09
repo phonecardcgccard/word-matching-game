@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中英文单词连连看</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="score-container">
+                <span>得分: <span id="score">0</span></span>
+                <span>剩余: <span id="remaining">10</span></span>
+            </div>
+            <div class="controls">
+                <button id="dragModeBtn" class="btn">拖拽模式</button>
+                <button id="clickModeBtn" class="btn">点击模式</button>
+                <button id="restartBtn" class="btn">重新开始</button>
+                <label for="fileInput" class="btn">导入单词</label>
+                <input type="file" id="fileInput" accept=".txt,.xlsx" style="display: none;">
+                <button id="exportBtn" class="btn">导出错题</button>
+                <button id="templateBtn" class="btn">下载模板</button>
+            </div>
+        </div>
+
+        <div class="upload-zone" id="uploadZone">
+            <p>拖拽文件到此处或点击"导入单词"按钮</p>
+            <p>支持 .txt 和 .xlsx 格式</p>
+        </div>
+
+        <div class="game-area">
+            <div id="englishWords" class="word-container"></div>
+            <canvas id="connectionCanvas"></canvas>
+            <div id="chineseWords" class="word-container"></div>
+        </div>
+
+        <div class="mistake-container">
+            <h3>错题本</h3>
+            <div id="mistakeList" class="mistake-list"></div>
+        </div>
+    </div>
+
+    <div id="loadingIndicator" style="display: none;">
+        <p>加载中...</p>
+    </div>
+
+    <div class="particles-container" id="particlesContainer"></div>
+
+    <!-- 音效文件 -->
+    <audio id="successSound" src="assets/success.mp3" preload="auto"></audio>
+    <audio id="errorSound" src="assets/error.mp3" preload="auto"></audio>
+
+    <!-- 脚本文件 -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="defaultWords.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
