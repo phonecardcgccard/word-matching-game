@@ -1,0 +1,54 @@
+.game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.game-area {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    min-height: 400px;
+}
+
+.word-container {
+    width: 200px;
+    padding: 10px;
+}
+
+.word-card {
+    padding: 10px;
+    margin: 5px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.word-card.selected {
+    background: #e3f2fd;
+}
+
+.word-card.matched {
+    background: #c8e6c9;
+}
+
+.word-card.error {
+    background: #ffcdd2;
+}
+
+#connectionCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
