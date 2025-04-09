@@ -299,3 +299,148 @@ function checkMatch(card1, card2) {
     if (card1.dataset.type === card2.dataset.type) return false;
     return card1.dataset.pair === card2.dataset.word;
 }
+
+// 渲染单词卡片
+function renderWordCards() {
+    console.log('开始渲染单词卡片');
+    
+    elements.englishWords.innerHTML = '';
+    elements.chineseWords.innerHTML = '';
+    
+    if (!gameState.words || gameState.words.length === 0) {
+        console.error('没有可用的单词');
+        return;
+    }
+    
+    const englishWords = [...gameState.words].map(w => ({word: w.english, original: w}));
+    const chineseWords = [...gameState.words].map(w => ({word: w.chinese, original: w}));
+    
+    shuffleArray(englishWords);
+    shuffleArray(chineseWords);
+    
+    englishWords.forEach(item => {
+        const card = createWordCard(item.word, 'english', item.original);
+        elements.englishWords.appendChild(card);
+    });
+    
+    chineseWords.forEach(item => {
+        const card = createWordCard(item.word, 'chinese', item.original);
+        elements.chineseWords.appendChild(card);
+    });
+}
+
+// 创建单词卡片
+function createWordCard(word, type, originalPair) {
+    const card = document.createElement('div');
+    card.className = 'word-card';
+    card.dataset.word = word;
+    card.dataset.type = type;
+    card.dataset.pair = type === 'english' ? originalPair.chinese : originalPair.english;
+    card.textContent = word;
+    
+    card.addEventListener('click', () => handleCardClick(card));
+    
+    if (gameState.gameMode === 'drag') {
+        setupDragEvents(card);
+    }
+    
+    return card;
+}
+
+// 设置拖拽事件
+function setupDragEvents(card) {
+    card.draggable = true;
+    
+    card.addEventListener('dragstart', e => handleDragStart(e, card));
+    card.addEventListener('dragend', e => handleDragEnd(e, card));
+    card.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', e => {
+        e.currentTarget.classList.remove('drag-over');
+    });
+    card.addEventListener('drop', e => handleDrop(e, card));
+    
+    card.addEventListener('touchstart', e => {
+        e.preventDefault();
+        handleTouchStart(e, card);
+    }, { passive: false });
+    
+    card.addEventListener('touchmove', e => {
+        e.preventDefault();
+        handleTouchMove(e);
+    }, { passive: false });
+    
+    card.addEventListener('touchend', e => handleTouchEnd(e, card));
+}
+
+// 处理卡片点击
+function handleCardClick(card) {
+    if (gameState.gameMode !== 'click' || card.classList.contains('matched')) return;
+    
+    if (gameState.selectedWord) {
+        if (gameState.selectedWord === card) {
+            card.classList.remove('selected');
+            gameState.selectedWord = null;
+            return;
+        }
+        
+        const isMatch = checkMatch(gameState.selectedWord, card);
+        if (isMatch) {
+            handleMatch(gameState.selectedWord, card);
+        } else {
+            handleMismatch(gameState.selectedWord, card);
+        }
+        
+        gameState.selectedWord.classList.remove('selected');
+        gameState.selectedWord = null;
+    } else {
+        card.classList.add('selected');
+        gameState.selectedWord = card;
+    }
+}
+
+// 处理拖拽开始
+function handleDragStart(e, card) {
+    if (card.classList.contains('matched')) return;
+    
+    gameState.isDragging = true;
+    gameState.selectedWord = card;
+    card.classList.add('selected');
+    
+    const rect = card.getBoundingClientRect();
+    gameState.dragStartPos = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+    };
+    
+    requestAnimationFrame(drawConnection);
+}
+
+// 处理拖拽结束
+function handleDragEnd(e, card) {
+    gameState.isDragging = false;
+    card.classList.remove('selected');
+    gameState.selectedWord = null;
+    gameState.connections = [];
+    drawConnection();
+}
+
+// 处理拖拽放下
+function handleDrop(e, card) {
+    e.preventDefault();
+    card.classList.remove('drag-over');
+    
+    if (!gameState.selectedWord || gameState.selectedWord === card) return;
+    
+    const isMatch = checkMatch(gameState.selectedWord, card);
+    if (isMatch) {
+        handleMatch(gameState.selectedWord, card);
+    } else {
+        handleMismatch(gameState.selectedWord, card);
+    }
+    
+    gameState.selectedWord.classList.remove('selected');
+    gameState.selectedWord = null;
+}
