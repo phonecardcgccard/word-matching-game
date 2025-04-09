@@ -192,3 +192,50 @@ function drawConnection() {
         requestAnimationFrame(drawConnection);
     }
 }
+
+// 处理文件导入
+function handleFileInput(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    
+    if (file.name.endsWith('.txt')) {
+        reader.onload = handleTxtFile;
+        reader.readAsText(file);
+    } else if (file.name.endsWith('.xlsx')) {
+        reader.onload = handleXlsxFile;
+        reader.readAsArrayBuffer(file);
+    }
+}
+
+// 处理 txt 文件
+function handleTxtFile(e) {
+    const content = e.target.result;
+    const lines = content.split('\n');
+    const words = lines.map(line => {
+        const [english, chinese] = line.trim().split(',');
+        return { english, chinese };
+    }).filter(pair => pair.english && pair.chinese);
+    
+    if (words.length > 0) {
+        gameState.words = words;
+        restartGame();
+    }
+}
+
+// 处理 xlsx 文件
+function handleXlsxFile(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const words = XLSX.utils.sheet_to_json(worksheet).map(row => ({
+        english: row.english || row.English || '',
+        chinese: row.chinese || row.Chinese || ''
+    })).filter(pair => pair.english && pair.chinese);
+    
+    if (words.length > 0) {
+        gameState.words = words;
+        restartGame();
+    }
+}
