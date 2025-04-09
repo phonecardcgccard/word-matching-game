@@ -1,40 +1,45 @@
-<!DOCTYPE html>   <！DOCTYPE   ！文档类型 html   超文本标记语言>
-<html   超文本标记语言 lang   只="zh-CN"   “应用”>   < html   超文本标记语言 lang   只 = "应用" >
-<head   头>   < >头
-    <meta   元 charset   字符集="UTF-8"   “utf - 8”>
-    <meta   元 name   名字="viewport"   “视口” content   内容="width=device-width, initial-scale=1.0"“宽度=设备宽度,初始= 1.0”>
-    <title   标题>单词匹配游戏</title   标题>
-    <link   链接 rel="stylesheet"   “样式表” href="styles.css">
-</head   头>   > < /头
-<body   身体>   身体< >
-    <div class   类="game-container"   “game-container”>
-        <div class   类="game-header">
-            <div class   类="score-container">
-                <span   跨度>得分: <span   跨度 id="score"   “分数”>0</span   跨度></span   跨度>
-                <span   跨度>剩余: <span   跨度 id="remaining"   “剩余的”>10</span   跨度></span   跨度>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词匹配游戏</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="score-container">
+                <span>得分: <span id="score">0</span></span>
+                <span>剩余: <span id="remaining">10</span></span>
             </div>
-            <div class   类="controls">
-                <button   按钮 id="dragModeBtn">拖拽模式</button   按钮>
-                <button   按钮 id="clickModeBtn">点击模式</button   按钮>
-                <button   按钮 id="restartBtn">重新开始</button   按钮>
-                <input type   类型="file" id="fileInput" accept=".txt,.xlsx">
-                <button   按钮 id="exportBtn">导出错题</button   按钮>
+            <div class="controls">
+                <button id="dragModeBtn">拖拽模式</button>
+                <button id="clickModeBtn">点击模式</button>
+                <button id="restartBtn">重新开始</button>
+                <input type="file" id="fileInput" accept=".txt,.xlsx">
+                <button id="exportBtn">导出错题</button>
             </div>
         </div>
-        <div class   类="game-area">   < div class   类 = "游戏区" >
-            <div id="englishWords" class   类="word-container"></div>
-            <canvas id="connectionCanvas"></canvas><帆布id = " connectionCanvas " > < /帆布>
-            <div id="chineseWords" class   类="word-container"></div>
+        <div class="game-area">
+            <div id="englishWords" class="word-container"></div>
+            <canvas id="connectionCanvas"></canvas>
+            <div id="chineseWords" class="word-container"></div>
         </div>
-        <div class   类="mistake-container">
+        <div class="mistake-container">
             <h3>错题本</h3>
             <div id="mistakeList"></div>
         </div>
     </div>
-    <audio   音频 id="successSound" src="success.mp3"></audio   音频>
-    <audio   音频 id="errorSound" src="error.mp3"></audio   音频>
-    <script   脚本 src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script   脚本>
-    <script    脚本src="game.js"></script   脚本>
-</body>   身体< / >
-  </html>
-
+    
+    <!-- 音效文件 -->
+    <audio id="successSound" src="assets/success.mp3"></audio>
+    <audio id="errorSound" src="assets/error.mp3"></audio>
+    
+    <!-- 引入依赖库 -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    
+    <!-- 引入游戏脚本 -->
+    <script src="game.js"></script>
+</body>
+</html>
