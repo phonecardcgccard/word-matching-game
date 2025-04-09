@@ -6,106 +6,80 @@
 
 .game-header {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    justify-content: space-between;
     margin-bottom: 20px;
-}
-
-@media (min-width: 768px) {
-    .game-header {
-        flex-direction: row;
-        justify-content: space-between;
-    }
 }
 
 .game-area {
     position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    justify-content: space-between;
     min-height: 400px;
 }
 
-@media (min-width: 768px) {
-    .game-area {
-        flex-direction: row;
-        justify-content: space-between;
-    }
-}
-
 .word-container {
-    width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
+    width: 200px;
     padding: 10px;
 }
 
 .word-card {
-    padding: 15px;
-    margin: 8px;
+    padding: 10px;
+    margin: 5px;
     background: #fff;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.3s;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.word-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .word-card.selected {
-    background: #e3f2fd;   背景:# e3f2fd;
-    border-color: #2196F3;
-}   好
+    background: #e3f2fd;
+}
 
 .word-card.matched {
-    background: #c8e6c9;   背景:# c8e6c9;
-    border-color: #4CAF50;
-}   好
+    background: #c8e6c9;
+}
 
 .word-card.error {
-    background: #ffcdd2;   背景:# ffcdd2;
-    border-color: #f44336;
-}   好
+    background: #ffcdd2;
+}
 
-#connectionCanvas {   # connectionCanvas}   好
-    position: absolute;   位置:绝对的;
-    top: 0;   上图:0;
-    left: 0;   左:0;
-    width: 100%;   宽度:100%;
-    height: 100%;   高度:100%;
-    pointer-events: none;   pointer-events:没有;
-    z-index: 1;
-}   好
+#connectionCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
 
-.controls {
-    display: flex;   显示:flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-}   好
+.error-message {
+    text-align: center;
+    padding: 20px;
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 4px;
+    margin: 20px 0;
+}
 
-.controls button {
+.error-message button {
+    margin-top: 10px;
     padding: 8px 16px;
+    background: #007bff;
+    color: white;
     border: none;
     border-radius: 4px;
-    background: #2196F3;
-    color: white;
-    cursor: pointer;   光标:指针;
-    transition: all 0.3s;   过渡：均为0.3s；
-}   好
+    cursor: pointer;
+}
 
-.controls button:hover {
-    background: #1976D2;
-}   好
-
-.mistake-container {
-    margin-top: 20px;
-    padding: 15px;
+#loadingIndicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
     border-radius: 8px;
-    background: #f5f5f5;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 }

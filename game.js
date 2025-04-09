@@ -516,6 +516,23 @@ function setupElements() {
             elements.successSound = document.getElementById('successSound');
             elements.errorSound = document.getElementById('errorSound');
             
+            // 在文件顶部添加
+            const elements = {
+                englishWords: null,
+                chineseWords: null,
+                connectionCanvas: null,
+                scoreElement: null,
+                remainingElement: null,
+                fileInput: null,
+                restartBtn: null,
+                exportBtn: null,
+                dragModeBtn: null,
+                clickModeBtn: null,
+                mistakeList: null,
+                successSound: null,
+                errorSound: null
+            };
+            
             // 验证必要元素存在
             Object.entries(elements).forEach(([key, element]) => {
                 if (!element) {
