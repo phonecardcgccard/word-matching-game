@@ -444,3 +444,104 @@ function handleDrop(e, card) {
     gameState.selectedWord.classList.remove('selected');
     gameState.selectedWord = null;
 }
+
+// 处理触摸开始
+function handleTouchStart(e, card) {
+    if (card.classList.contains('matched')) return;
+    
+    const touch = e.touches[0];
+    gameState.isDragging = true;
+    gameState.selectedWord = card;
+    card.classList.add('selected');
+    
+    const rect = card.getBoundingClientRect();
+    gameState.dragStartPos = {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+    };
+    gameState.dragEndPos = {
+        x: touch.clientX,
+        y: touch.clientY
+    };
+    
+    requestAnimationFrame(drawConnection);
+}
+
+// 处理触摸移动
+function handleTouchMove(e) {
+    if (!gameState.isDragging) return;
+    
+    const touch = e.touches[0];
+    gameState.dragEndPos = {
+        x: touch.clientX,
+        y: touch.clientY
+    };
+}
+
+// 处理触摸结束
+function handleTouchEnd(e, card) {
+    if (!gameState.isDragging) return;
+    
+    const endElement = document.elementFromPoint(
+        gameState.dragEndPos.x,
+        gameState.dragEndPos.y
+    );
+    
+    if (endElement && endElement.classList.contains('word-card')) {
+        handleDrop(e, endElement);
+    }
+    
+    gameState.isDragging = false;
+    card.classList.remove('selected');
+    gameState.selectedWord = null;
+    gameState.connections = [];
+    drawConnection();
+}
+
+// 设置DOM元素
+function setupElements() {
+    return new Promise((resolve, reject) => {
+        try {
+            elements.englishWords = document.getElementById('englishWords');
+            elements.chineseWords = document.getElementById('chineseWords');
+            elements.connectionCanvas = document.getElementById('connectionCanvas');
+            elements.scoreElement = document.getElementById('score');
+            elements.remainingElement = document.getElementById('remaining');
+            elements.fileInput = document.getElementById('fileInput');
+            elements.restartBtn = document.getElementById('restartBtn');
+            elements.exportBtn = document.getElementById('exportBtn');
+            elements.dragModeBtn = document.getElementById('dragModeBtn');
+            elements.clickModeBtn = document.getElementById('clickModeBtn');
+            elements.mistakeList = document.getElementById('mistakeList');
+            elements.successSound = document.getElementById('successSound');
+            elements.errorSound = document.getElementById('errorSound');
+            
+            // 验证必要元素存在
+            Object.entries(elements).forEach(([key, element]) => {
+                if (!element) {
+                    throw new Error(`缺少必要的DOM元素: ${key}`);
+                }
+            });
+            
+            resolve();
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+// 显示友好的错误提示
+function showFriendlyError(message) {
+    const gameArea = document.querySelector('.game-area');
+    if (gameArea) {
+        gameArea.innerHTML = `
+            <div class="error-message">
+                <p>${message}</p>
+                <button onclick="location.reload()">刷新页面</button>
+            </div>
+        `;
+    } else {
+        console.error('无法找到游戏区域元素');
+        alert(message);
+    }
+}
