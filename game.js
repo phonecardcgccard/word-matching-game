@@ -133,3 +133,62 @@ function shuffleArray(array) {
 
 // 初始化游戏
 document.addEventListener('DOMContentLoaded', initGame);
+
+// 处理匹配成功
+function handleMatch(card1, card2) {
+    gameState.matchedPairs.push([card1, card2]);
+    card1.classList.add('matched');
+    card2.classList.add('matched');
+    gameState.score += 10;
+    updateScore();
+    playSound('success');
+}
+
+// 处理匹配失败
+function handleMismatch(card1, card2) {
+    card1.classList.add('error');
+    card2.classList.add('error');
+    
+    // 记录错误
+    const word = card1.dataset.type === 'english' ? card1.dataset.word : card2.dataset.word;
+    gameState.mistakes[word] = (gameState.mistakes[word] || 0) + 1;
+    saveMistakes();
+    updateMistakeList();
+    
+    playSound('error');
+    
+    setTimeout(() => {
+        card1.classList.remove('error');
+        card2.classList.remove('error');
+    }, 1000);
+}
+
+// 绘制连线
+function drawConnection() {
+    const canvas = elements.connectionCanvas;
+    const ctx = canvas.getContext('2d');
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (gameState.isDragging) {
+        ctx.beginPath();
+        ctx.moveTo(gameState.dragStartPos.x, gameState.dragStartPos.y);
+        ctx.lineTo(gameState.dragEndPos.x, gameState.dragEndPos.y);
+        ctx.strokeStyle = '#2196F3';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+    
+    gameState.connections.forEach(conn => {
+        ctx.beginPath();
+        ctx.moveTo(conn.start.x, conn.start.y);
+        ctx.lineTo(conn.end.x, conn.end.y);
+        ctx.strokeStyle = '#4CAF50';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+    
+    if (gameState.isDragging) {
+        requestAnimationFrame(drawConnection);
+    }
+}
