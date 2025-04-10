@@ -1,7 +1,13 @@
 // ... 前面的代码保持不变 ...
 // 改进游戏状态管理
 const gameState = {
-    // ... 保持现有状态属性
+    words: [],
+    selectedWord: null,
+    matchedPairs: [],
+    score: 0,
+    mistakes: {},
+    gameMode: 'drag',
+    // 添加新属性
     isDragging: false,
     dragStartPos: { x: 0, y: 0 },
     dragEndPos: { x: 0, y: 0 },
@@ -11,13 +17,6 @@ const gameState = {
     timer: null,
     soundEnabled: true
 };
-
-// 在 initGame 函数末尾添加
-function initGame() {
-    if (gameState.timeLimit > 0) {
-        startTimer();
-    }
-}
 
 // 添加难度和计时相关函数
 function setDifficulty(level) {
@@ -307,4 +306,8 @@ function handleXlsxFile(e) {
 }
 
 // 初始化游戏
-document.addEventListener('DOMContentLoaded', initGame);
+function initGame() {
+    if (gameState.timeLimit > 0) {
+        startTimer();
+    }
+}
