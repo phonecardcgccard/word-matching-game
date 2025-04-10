@@ -1,109 +1,103 @@
-/* 全局样式 */
 :root {
-    --primary-color: #4a90e2;
-    --success-color: #4caf50;
-    --error-color: #f44336;
-    --card-bg: linear-gradient(145deg, #ffecd2 0%, #fcb69f 100%);
+    --primary-color: #2196F3;
+    --success-color: #4CAF50;
+    --error-color: #F44336;
+    --card-bg: #FFFFFF;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    margin: 0;
-    font-family: 'Microsoft YaHei', sans-serif;
-    background: #f5f5f5;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+    min-height: 100vh;
+    padding: 20px;
 }
 
-.game-container {
+.container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
 }
 
-/* 游戏头部 */
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    padding: 20px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.score-container {
-    display: flex;
-    gap: 20px;
-    font-size: 1.2em;
+header {
+    margin-bottom: 20px;
 }
 
 .controls {
     display: flex;
     gap: 10px;
+    margin-bottom: 10px;
 }
 
-.btn {
+.controls button {
     padding: 8px 16px;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     background: var(--primary-color);
     color: white;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.2s;
 }
 
-.btn:hover {
+.controls button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* 游戏区域 */
+.stats {
+    display: flex;
+    gap: 20px;
+    font-size: 1.2em;
+}
+
 .game-area {
-    position: relative;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    min-height: 500px;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    position: relative;
+    margin-bottom: 20px;
 }
 
-.word-container {
+.word-column {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
 .word-card {
-    padding: 15px;
     background: var(--card-bg);
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
     cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-    font-size: 1.1em;
+    transition: transform 0.2s;
+    user-select: none;
 }
 
 .word-card:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+    transform: scale(1.05);
 }
 
 .word-card.selected {
-    background: linear-gradient(145deg, #e3f2fd 0%, #bbdefb 100%);
-    box-shadow: 0 0 0 3px var(--primary-color);
+    background: var(--primary-color);
+    color: white;
 }
 
 .word-card.matched {
-    background: linear-gradient(145deg, #c8e6c9 0%, #81c784 100%);
-    pointer-events: none;
-    opacity: 0.8;
+    background: var(--success-color);
+    color: white;
 }
 
 .word-card.error {
-    background: linear-gradient(145deg, #ffcdd2 0%, #ef9a9a 100%);
-    animation: shake 0.5s ease-in-out;
+    animation: shake 0.5s;
+    background: var(--error-color);
+    color: white;
 }
 
-/* 连线画布 */
 #connectionCanvas {
     position: absolute;
     top: 0;
@@ -111,98 +105,68 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
 }
 
-/* 文件上传区域 */
-.upload-zone {
-    padding: 20px;
-    border: 2px dashed #ccc;
-    border-radius: 15px;
-    text-align: center;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-}
-
-.upload-zone.drag-over {
-    border-color: var(--primary-color);
-    background: rgba(74, 144, 226, 0.1);
-}
-
-/* 错题本 */
-.mistake-container {
-    margin-top: 30px;
-    padding: 20px;
+.mistake-panel {
     background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
 }
 
-.mistake-list {
-    max-height: 200px;
-    overflow-y: auto;
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
 }
 
-/* 动画效果 */
+@keyframes particle {
+    to {
+        transform: translate(var(--tx), var(--ty));
+        opacity: 0;
+    }
+}
+
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
 }
 
-/* 响应式设计 */
+.error-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--error-color);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 4px;
+    animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
 @media (max-width: 768px) {
-    .game-header {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
     .game-area {
         grid-template-columns: 1fr;
-        gap: 20px;
     }
     
     .controls {
         flex-wrap: wrap;
-        justify-content: center;
     }
-}
-
-/* 加载提示和错误信息 */
-#loadingIndicator {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    z-index: 1000;
-}
-
-.error-message {
-    text-align: center;
-    padding: 20px;
-    background: #fff3cd;
-    border: 1px solid #ffeeba;
-    border-radius: 15px;
-    margin: 20px 0;
-}
-
-.error-message button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-/* 粒子效果容器 */
-.particles-container {
-    position: absolute;
-    pointer-events: none;
-    z-index: 2;
+    
+    .stats {
+        flex-direction: column;
+        gap: 10px;
+    }
 }
