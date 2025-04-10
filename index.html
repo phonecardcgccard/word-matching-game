@@ -1,59 +1,47 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中英文单词连连看</title>
-    <link rel="stylesheet" href="styles.css">
+<!DOCTYPE html>   <！DOCTYPE   ！文档类型 html   超文本标记语言>
+<html   超文本标记语言 lang   只="zh-CN"   “应用”>
+<head   头>
+    <meta   元 charset   字符集="UTF-8"   “utf - 8”>
+    <meta   元 name   名字="viewport"   “视口” content   内容="width=device-width, initial-scale=1.0"“宽度=设备宽度,初始= 1.0”>
+    <title   标题>中英单词连连看</title   标题>
+    <link   链接 rel="stylesheet"   “样式表” href="style.css">
+    <script   脚本 src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script   脚本>
 </head>
-<body>
-    <div class="game-container">
-        <div class="game-header">
-            <div class="score-container">
-                <span>得分: <span id="score">0</span></span>
-                <span>剩余: <span id="remaining">10</span></span>
+<body   身体>
+    <div class   类="container">
+        <header   头>
+            <div class   类="controls"   “控制”>
+                <button    按钮id="restartBtn"   “restartBtn”>重新开始</button>
+                <button    按钮id="dragModeBtn"   “dragModeBtn”>拖拽模式</button>
+                <button    按钮id="clickModeBtn"   “clickModeBtn”>点击模式</button>
+                <button    按钮id="soundBtn">🔊</button>
+                <input    输入type   类型="file"   “文件” id="fileInput" accept=".txt,.xlsx">
+                <button    按钮id="templateBtn">下载模板</button>
+                <button    按钮id="exportBtn"   “exportBtn”>导出错题</button>
             </div>
-            <div class="controls">
-                <button id="dragModeBtn" class="btn">拖拽模式</button>
-                <button id="clickModeBtn" class="btn">点击模式</button>
-                <button id="restartBtn" class="btn">重新开始</button>
-                <label for="fileInput" class="btn">导入单词</label>
-                <input type="file" id="fileInput" accept=".txt,.xlsx" style="display: none;">
-                <button id="exportBtn" class="btn">导出错题</button>
-                <button id="templateBtn" class="btn">下载模板</button>
+            <div class   类="stats">
+                <span   跨度>得分: <span    跨度id="score"   “分数”>0</span></span   跨度>
+                <span   跨度>剩余: <span    跨度id="remaining"   “剩余的”>20</span></span   跨度>
+                <span    跨度id="timer">剩余时间: 90秒</span>
             </div>
-        </div>
-
-        <div class="upload-zone" id="uploadZone">
-            <p>拖拽文件到此处或点击"导入单词"按钮</p>
-            <p>支持 .txt 和 .xlsx 格式</p>
-        </div>
-
-        <div class="game-area">
-            <div id="englishWords" class="word-container"></div>
-            <canvas id="connectionCanvas"></canvas>
-            <div id="chineseWords" class="word-container"></div>
-        </div>
-
-        <div class="mistake-container">
+        </header>
+        
+        <main    主要class="game-area"   “游戏区”>
+            <div class   类="word-column english-words" id="englishWords"   “englishWords”></div>
+            <canvas    帆布id="connectionCanvas"   “connectionCanvas”></canvas>
+            <div class   类="word-column chinese-words" id="chineseWords"   “chineseWords”></div>
+        </main>
+        
+        <aside class   类="mistake-panel">
             <h3>错题本</h3>
-            <div id="mistakeList" class="mistake-list"></div>
-        </div>
+            <div id="mistakeList"></div>
+        </aside>
     </div>
-
-    <div id="loadingIndicator" style="display: none;">
-        <p>加载中...</p>
-    </div>
-
-    <div class="particles-container" id="particlesContainer"></div>
-
-    <!-- 音效文件 -->
-    <audio id="successSound" src="assets/success.mp3" preload="auto"></audio>
-    <audio id="errorSound" src="assets/error.mp3" preload="auto"></audio>
-
-    <!-- 脚本文件 -->
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="defaultWords.js"></script>
-    <script src="game.js"></script>
+    
+    <div id="particlesContainer"></div>
+    <audio    音频id="successSound"   “successSound” src="success.mp3" preload="auto"></audio>
+    <audio    音频id="errorSound" src="error.mp3" preload="auto"></audio>
+    
+    <script    脚本src="game.js"></script   脚本>
 </body>
-</html>
+    </html>
