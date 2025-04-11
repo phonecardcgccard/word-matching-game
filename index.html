@@ -1,68 +1,211 @@
-<!DOCTYPE html>   <！DOCTYPE   ！文档类型 html   超文本标记语言>
+<!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English-Chinese Word Matching Game | Fun Language Learning</title>
+    <meta name="description" content="Improve your English and Chinese vocabulary with our interactive word matching game. Perfect for language learners of all levels. Play now for free!">
+    <meta name="keywords" content="English Chinese words, language learning game, vocabulary practice, word matching game, bilingual education">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --accent-color: #60a5fa;
+            --text-color: #1f2937;
+            --light-bg: #f3f4f6;
+        }
 
-<head>   < >头
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Little Fox - Meet the Animals Games</title>
-  <link rel="icon" href="https://ext.same-assets.com/158772592/2678046144.png" type="image/png" />
-</head>   > < /头
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<body>   身体< >
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 4rem 0;
+        }
+
+        .features {
+            background: var(--light-bg);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-container {
+            margin: 2rem 0;
+            height: 800px;
+        }
+
+        .game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .cta {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+        }
+
+        .rules {
+            background: white;
+        }
+
+        .scoring {
+            background: var(--light-bg);
+        }
+
+        .benefits {
+            background: white;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            section {
+                padding: 2rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="container">
+            <h1>Master English-Chinese Vocabulary Through Interactive Gaming</h1>
+            <p>Enhance your language skills with our engaging word matching game</p>
+        </div>
+    </section>
+
+    <section class="game-container">
+        <div class="container">
+            <iframe src="https://phonecardcgccard.github.io/word-matching-game/" class="game-frame" title="English-Chinese Word Matching Game"></iframe>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Game Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Dual Mode Gameplay</h3>
+                    <p>Choose between drag-and-drop or click mode to match words according to your preference.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your learning progress with our built-in scoring system and mistake tracker.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Custom Word Lists</h3>
+                    <p>Upload your own word lists in Excel or TXT format to practice specific vocabulary.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="rules">
+        <div class="container">
+            <h2>How to Play</h2>   
+如何播放
+            <div class="rules-content">
+                <h3>Game Rules</h3>
+                <ul>
+                    <li>Match English words with their Chinese translations</li>
+                    <li>Choose between drag-and-drop or click mode</li>
+                    <li>Complete matches within the time limit</li>
+                    <li>Track your progress and review mistakes</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="scoring">
+        <div class="container">
+            <h2>Scoring System</h2>   < h2 >评分系统< / h2 >
+            <div class="scoring-content">
+                <h3>Points and Rewards</h3>
+                <ul>
+                    <li>+10 points for each correct match</li>
+                    <li>Time bonuses for quick completion</li>
+                    <li>Progress tracking across sessions</li>
+                    <li>Mistake tracking for focused learning</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="benefits">
+        <div class="container">
+            <h2>Learning Benefits</h2>
+            <div class="benefits-content">
+                <h3>Why Play Our Game?</h3>
+                <ul>
+                    <li>Improve vocabulary retention through active recall</li>
+                    <li>Learn at your own pace with adjustable difficulty levels</li>
+                    <li>Track your progress with detailed statistics</li>
+                    <li>Practice with customizable word lists</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Start Learning Today</h2>
+            <p>Begin your language learning journey with our interactive word matching game</p>
+        </div>
+    </section>
 </body>   身体< / >
-
 </html>
-
-
-
-
-
-<!DOCTYPE html>   <！DOCTYPE   ！文档类型 html   超文本标记语言>
-<html   超文本标记语言 lang   只="zh-CN"   “应用”>
-<head   头>
-    <meta   元 charset   字符集="UTF-8"   “utf - 8”>
-    <meta   元 name   名字="viewport"   “视口” content   内容="width=device-width, initial-scale=1.0"“宽度=设备宽度,初始= 1.0”>
-    <title   标题>中英单词连连看</title   标题>
-    <link   链接 rel="stylesheet"   “样式表” href="style.css">
-    <script   脚本 src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script   脚本>
-<   > <    > < /头/头/head   头>
-<body   身体>
-    <div class   类="container">
-        <header   头>
-            <div class   类="controls"   “控制”>
-                <button    按钮id="restartBtn"   “restartBtn”>重新开始</button>
-                <button    按钮id="dragModeBtn"   “dragModeBtn”>拖拽模式</button>
-                <button    按钮id="clickModeBtn"   “clickModeBtn”>点击模式</button>
-                <button    按钮id="soundBtn">🔊</button>
-                <input    输入type   类型="file"   “文件” id="fileInput" accept   接受=".txt,.xlsx">
-                <button    按钮id="templateBtn"   “templateBtn”>下载模板</button>
-                <button    按钮id="exportBtn"   “exportBtn”   “exportBtn”>导出错题</button>
-            </div>
-            <div class   类   类="stats"   “统计数据”>
-                <span   跨度>得分: <span    跨度id="score"   “分数”   “分数”>0</span></span   跨度>
-                <span   跨度>剩余: <span    跨度id="remaining"   “剩余的”   “剩余的”>20</span></span   跨度>
-                <span    跨度id="timer"   “定时器”>剩余时间: 90秒</span>
-            </div>
-        <   <    < /头>/头>/header   头>
-        
-        <main    主要class="game-area"   “游戏区”   “游戏区”>
-            <div class   类   类="word-column english-words"“word-column英语单词” id="englishWords"   “englishWords”   “englishWords”></div>
-            <canvas    帆布id="connectionCanvas"   “connectionCanvas”   “connectionCanvas”></canvas>
-            <div class   类   类="word-column chinese-words"“word-column汉字” id="chineseWords"   “chineseWords”   “chineseWords”></div>
-        </main>
-        
-        <aside class   类   类="mistake-panel"   “mistake-panel”>
-            <h3>错题本</h3>
-            <div id="mistakeList"></div>
-        <      除了< / >除了< / >/aside>
-    </div>
-    
-    <div id="particlesContainer"   “particlesContainer”></div>
-    <audio    音频id="successSound"   “successSound”   “successSound” src="success.mp3" preload="auto"   “汽车”></audio>
-    <audio    音频id="errorSound" src="error.mp3" preload="auto"   “汽车”></audio>
-    
-    <script    脚本src="game.js"></script   脚本>
-<   身体< / >/body   身体>
-    </html>
