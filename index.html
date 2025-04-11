@@ -1,4 +1,25 @@
 <!DOCTYPE html>   <！DOCTYPE   ！文档类型 html   超文本标记语言>
+<html lang="en">
+
+<head>   < >头
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Little Fox - Meet the Animals Games</title>
+  <link rel="icon" href="https://ext.same-assets.com/158772592/2678046144.png" type="image/png" />
+</head>   > < /头
+
+<body>   身体< >
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>   身体< / >
+
+</html>
+
+
+
+
+
+<!DOCTYPE html>   <！DOCTYPE   ！文档类型 html   超文本标记语言>
 <html   超文本标记语言 lang   只="zh-CN"   “应用”>
 <head   头>
     <meta   元 charset   字符集="UTF-8"   “utf - 8”>
@@ -6,7 +27,7 @@
     <title   标题>中英单词连连看</title   标题>
     <link   链接 rel="stylesheet"   “样式表” href="style.css">
     <script   脚本 src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script   脚本>
-</head>
+<   > <    > < /头/头/head   头>
 <body   身体>
     <div class   类="container">
         <header   头>
@@ -15,33 +36,33 @@
                 <button    按钮id="dragModeBtn"   “dragModeBtn”>拖拽模式</button>
                 <button    按钮id="clickModeBtn"   “clickModeBtn”>点击模式</button>
                 <button    按钮id="soundBtn">🔊</button>
-                <input    输入type   类型="file"   “文件” id="fileInput" accept=".txt,.xlsx">
-                <button    按钮id="templateBtn">下载模板</button>
-                <button    按钮id="exportBtn"   “exportBtn”>导出错题</button>
+                <input    输入type   类型="file"   “文件” id="fileInput" accept   接受=".txt,.xlsx">
+                <button    按钮id="templateBtn"   “templateBtn”>下载模板</button>
+                <button    按钮id="exportBtn"   “exportBtn”   “exportBtn”>导出错题</button>
             </div>
-            <div class   类="stats">
-                <span   跨度>得分: <span    跨度id="score"   “分数”>0</span></span   跨度>
-                <span   跨度>剩余: <span    跨度id="remaining"   “剩余的”>20</span></span   跨度>
-                <span    跨度id="timer">剩余时间: 90秒</span>
+            <div class   类   类="stats"   “统计数据”>
+                <span   跨度>得分: <span    跨度id="score"   “分数”   “分数”>0</span></span   跨度>
+                <span   跨度>剩余: <span    跨度id="remaining"   “剩余的”   “剩余的”>20</span></span   跨度>
+                <span    跨度id="timer"   “定时器”>剩余时间: 90秒</span>
             </div>
-        </header>
+        <   <    < /头>/头>/header   头>
         
-        <main    主要class="game-area"   “游戏区”>
-            <div class   类="word-column english-words" id="englishWords"   “englishWords”></div>
-            <canvas    帆布id="connectionCanvas"   “connectionCanvas”></canvas>
-            <div class   类="word-column chinese-words" id="chineseWords"   “chineseWords”></div>
+        <main    主要class="game-area"   “游戏区”   “游戏区”>
+            <div class   类   类="word-column english-words"“word-column英语单词” id="englishWords"   “englishWords”   “englishWords”></div>
+            <canvas    帆布id="connectionCanvas"   “connectionCanvas”   “connectionCanvas”></canvas>
+            <div class   类   类="word-column chinese-words"“word-column汉字” id="chineseWords"   “chineseWords”   “chineseWords”></div>
         </main>
         
-        <aside class   类="mistake-panel">
+        <aside class   类   类="mistake-panel"   “mistake-panel”>
             <h3>错题本</h3>
             <div id="mistakeList"></div>
-        </aside>
+        <      除了< / >除了< / >/aside>
     </div>
     
-    <div id="particlesContainer"></div>
-    <audio    音频id="successSound"   “successSound” src="success.mp3" preload="auto"></audio>
-    <audio    音频id="errorSound" src="error.mp3" preload="auto"></audio>
+    <div id="particlesContainer"   “particlesContainer”></div>
+    <audio    音频id="successSound"   “successSound”   “successSound” src="success.mp3" preload="auto"   “汽车”></audio>
+    <audio    音频id="errorSound" src="error.mp3" preload="auto"   “汽车”></audio>
     
     <script    脚本src="game.js"></script   脚本>
-</body>
+<   身体< / >/body   身体>
     </html>
