@@ -67,21 +67,21 @@ function gameLoop() {
         renderGame();
     }
     requestAnimationFrame(gameLoop);
-}   好
+}
 
 // 更新游戏状态
 function updateGame() {
     updateTimer();
     updateScore();
     checkGameEnd();
-}   好
+}
 
 // 渲染游戏
 function renderGame() {
     renderWordCards();
     drawConnections();
     updateUI();
-}   好
+}
 
 // 开始新游戏
 function startGame() {
@@ -89,7 +89,7 @@ function startGame() {
     loadWords();
     startTimer();
     gameLoop();
-}   好
+}
 
 // 重置游戏状态
 function resetGameState() {
@@ -101,7 +101,7 @@ function resetGameState() {
         connections: [],
         isPaused: false
     });
-}   好
+}
 
 // 加载单词
 function loadWords() {
@@ -109,13 +109,13 @@ function loadWords() {
         gameState.words = [...gameConfig.defaultWordList];
     }
     shuffleArray(gameState.words);
-}   好
+}
 
 // 渲染UI
 function renderUI() {
     elements.scoreElement.textContent = `得分: ${gameState.score}`;
     elements.comboElement.textContent = gameState.combo > 1 ? `${gameState.combo}连击!` : '';
     updateMistakeList();
-}   好
+}
 
 // ... 其他现有函数保持不变 ...
