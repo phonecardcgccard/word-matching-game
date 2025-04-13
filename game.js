@@ -1,4 +1,4 @@
-// 添加游戏配置选项
+// 游戏配置
 const gameConfig = {
     maxWords: 20,
     bonusTimePoints: 100,
@@ -7,127 +7,115 @@ const gameConfig = {
     defaultWordList: [
         { english: "apple", chinese: "苹果" },
         { english: "book", chinese: "书" },
-        // ... 更多默认单词
-    ]
+        { english: "cat", chinese: "猫" },
+        { english: "dog", chinese: "狗" },
+        { english: "elephant", chinese: "大象" }
+    ],
+    difficulties: {
+        easy: { timeLimit: 120000, scoreMultiplier: 1 },
+        normal: { timeLimit: 90000, scoreMultiplier: 1.5 },
+        hard: { timeLimit: 60000, scoreMultiplier: 2 }
+    }
 };
 
-// 在 gameState 中添加新属性
+// 游戏状态
 const gameState = {
-    // ... 现有属性 ...
-    bonusPoints: 0,
+    words: [],
+    selectedWord: null,
+    matchedPairs: [],
+    score: 0,
     combo: 0,
     maxCombo: 0,
-    lastMatchTime: 0,
-    statistics: {
-        totalGames: 0,
-        totalScore: 0,
-        bestScore: 0,
-        averageTime: 0
-    }
+    mistakes: {},
+    gameMode: 'drag',
+    isDragging: false,
+    dragStartPos: { x: 0, y: 0 },
+    dragEndPos: { x: 0, y: 0 },
+    connections: [],
+    difficulty: 'normal',
+    timeLimit: 0,
+    timer: null,
+    soundEnabled: true,
+    isPaused: false
 };
 
-// 添加统计功能
-function updateStatistics() {
-    const stats = gameState.statistics;
-    stats.totalGames++;
-    stats.totalScore += gameState.score;
-    stats.bestScore = Math.max(stats.bestScore, gameState.score);
-    
-    localStorage.setItem('gameStats', JSON.stringify(stats));
-}
+// DOM 元素引用
+const elements = {
+    gameContainer: document.getElementById('gameContainer'),
+    englishWords: document.getElementById('englishWords'),
+    chineseWords: document.getElementById('chineseWords'),
+    connectionCanvas: document.getElementById('connectionCanvas'),
+    scoreElement: document.getElementById('score'),
+    comboElement: document.getElementById('combo'),
+    timerElement: document.getElementById('timer'),
+    mistakeList: document.getElementById('mistakeList')
+};
 
-// 改进计分系统
-function updateScore(points) {
-    if (points > 0) {
-        gameState.combo++;
-        gameState.maxCombo = Math.max(gameState.maxCombo, gameState.combo);
-        
-        // 计算连击加成
-        const comboBonus = Math.floor(gameState.combo / 3) * 5;
-        points += comboBonus;
-        
-        // 计算时间加成
-        const now = Date.now();
-        if (gameState.lastMatchTime && (now - gameState.lastMatchTime < 2000)) {
-            points += gameConfig.bonusTimePoints;
-        }
-        gameState.lastMatchTime = now;
-    } else {
-        gameState.combo = 0;
-    }
-    
-    gameState.score += points;
-    elements.scoreElement.textContent = gameState.score;
-}
-
-// 添加进度保存功能
-function saveProgress() {
-    const progress = {
-        score: gameState.score,
-        matchedPairs: gameState.matchedPairs,
-        mistakes: gameState.mistakes,
-        timeRemaining: gameState.timeLimit
-    };
-    localStorage.setItem('gameProgress', JSON.stringify(progress));
-}
-
-// 加载进度
-function loadProgress() {
-    const savedProgress = localStorage.getItem('gameProgress');
-    if (savedProgress) {
-        const progress = JSON.parse(savedProgress);
-        Object.assign(gameState, progress);
-        updateScore(0);
-        updateMistakeList();
-    }
-}
-
-// 改进粒子效果
-function createMatchParticles(card1, card2) {
-    const container = elements.particlesContainer;
-    const center1 = getCardCenter(card1);
-    const center2 = getCardCenter(card2);
-    const colors = ['#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B'];
-    
-    // 添加连击特效
-    if (gameState.combo > 2) {
-        colors.push('#FF9800', '#F44336');
-    }
-    
-    for (let i = 0; i < (gameConfig.particleCount + Math.min(gameState.combo * 2, 20)); i++) {
-        // ... 现有粒子创建代码 ...
-    }
-}
-
-// 添加游戏结束统计
-function showGameSummary() {
-    const summary = document.createElement('div');
-    summary.className = 'game-summary';
-    summary.innerHTML = `
-        <h2>游戏统计</h2>
-        <p>最终得分: ${gameState.score}</p>
-        <p>最大连击: ${gameState.maxCombo}</p>
-        <p>错误次数: ${Object.keys(gameState.mistakes).length}</p>
-        <p>用时: ${Math.floor((gameState.timeLimit - gameState.timer) / 1000)}秒</p>
-        <button onclick="restartGame()">再来一局</button>
-    `;
-    document.body.appendChild(summary);
-}
-
-// 改进初始化函数
+// 初始化游戏
 function initGame() {
-    // ... 现有初始化代码 ...
-    
-    // 加载统计数据
-    const savedStats = localStorage.getItem('gameStats');
-    if (savedStats) {
-        gameState.statistics = JSON.parse(savedStats);
-    }
-    
-    // 加载上次进度
-    loadProgress();
-    
-    if (gameState.timeLimit > 0) {
-        startTimer();
-    }
+    loadGameProgress();
+    setupEventListeners();
+    initializeCanvas();
+    renderUI();
+    startGame();
 }
+
+// 游戏主循环
+function gameLoop() {
+    if (!gameState.isPaused) {
+        updateGame();
+        renderGame();
+    }
+    requestAnimationFrame(gameLoop);
+}   好
+
+// 更新游戏状态
+function updateGame() {
+    updateTimer();
+    updateScore();
+    checkGameEnd();
+}   好
+
+// 渲染游戏
+function renderGame() {
+    renderWordCards();
+    drawConnections();
+    updateUI();
+}   好
+
+// 开始新游戏
+function startGame() {
+    resetGameState();
+    loadWords();
+    startTimer();
+    gameLoop();
+}   好
+
+// 重置游戏状态
+function resetGameState() {
+    Object.assign(gameState, {
+        score: 0,
+        combo: 0,
+        maxCombo: 0,
+        matchedPairs: [],
+        connections: [],
+        isPaused: false
+    });
+}   好
+
+// 加载单词
+function loadWords() {
+    if (gameState.words.length === 0) {
+        gameState.words = [...gameConfig.defaultWordList];
+    }
+    shuffleArray(gameState.words);
+}   好
+
+// 渲染UI
+function renderUI() {
+    elements.scoreElement.textContent = `得分: ${gameState.score}`;
+    elements.comboElement.textContent = gameState.combo > 1 ? `${gameState.combo}连击!` : '';
+    updateMistakeList();
+}   好
+
+// ... 其他现有函数保持不变 ...
