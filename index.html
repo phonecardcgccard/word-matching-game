@@ -1234,7 +1234,39 @@
                     { english: "constant", chinese: "常数" },
                     { english: "constitute", chinese: "构成" },
                     { english: "constrain", chinese: "约束" },
-                    { english:
+                 ],
+    };
+
+    // Display logic
+    function displayWords(set) {
+        const englishColumn = document.getElementById("englishColumn");
+        const chineseColumn = document.getElementById("chineseColumn");
+
+        // Clear current words
+        englishColumn.innerHTML = "";
+        chineseColumn.innerHTML = "";
+
+        // Load 20 words from the selected set
+        const selectedSet = wordSets[set];
+        const wordsToDisplay = selectedSet.slice(0, 20);
+
+        wordsToDisplay.forEach((word) => {
+            const englishCard = document.createElement("div");
+            englishCard.className = "card card-content";
+            englishCard.textContent = word.english;
+
+            const chineseCard = document.createElement("div");
+            chineseCard.className = "card card-content chinese-font";
+            chineseCard.textContent = word.chinese;
+
+            englishColumn.appendChild(englishCard);
+            chineseColumn.appendChild(chineseCard);
+        });
+    }
+
+    // Example usage
+    displayWords("easy");
+</script>
 </html>
 
                      
