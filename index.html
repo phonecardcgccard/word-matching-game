@@ -45,15 +45,6 @@
         .card-content {
             word-break: break-word;
             padding: 0.5rem;
-            border-radius: 0.5rem;
-        }
-        
-        .english-word {
-            background-color: rgba(219, 234, 254, 0.7); /* Soft blue */
-        }
-        
-        .chinese-word {
-            background-color: rgba(254, 226, 226, 0.7); /* Soft red */
         }
         
         .progress-bar {
@@ -103,6 +94,9 @@
                 <div class="flex items-center space-x-4 mb-4 md:mb-0">
                     <button id="newGameBtn" class="bg-white text-indigo-700 px-4 py-2 rounded-lg font-medium hover:bg-indigo-100 transition">
                         <i class="fas fa-redo mr-2"></i>New Game
+                    </button>
+                    <button id="nextSetBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-800 transition">
+                        <i class="fas fa-forward mr-2"></i>Next Set
                     </button>
                 </div>
                 
@@ -168,6 +162,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
         // Vocabulary sets categorized by difficulty
