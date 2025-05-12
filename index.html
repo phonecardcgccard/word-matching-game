@@ -1238,7 +1238,288 @@
                     { english: "minister", chinese: "部长" },
                     { english: "leader", chinese: "领导人" },
                     { english: "party", chinese: "政党" },
-                    { english:
-</html>
+                    { english: "equivocate", chinese: "含糊其辞" },
+                    { english: "erudite", chinese: "博学的" },
+                    { english: "esoteric", chinese: "深奥的" },
+                    { english: "exacerbate", chinese: "使恶化" },
+                    { english: "fastidious", chinese: "挑剔的" },
+                    { english: "fecund", chinese: "多产的" },
+                    { english: "fractious", chinese: "易怒的" },
+                    { english: "garrulous", chinese: "喋喋不休的" },
+                    { english: "grandiloquent", chinese: "夸张的" },
+                    { english: "harangue", chinese: "长篇大论" },
+                    { english: "iconoclast", chinese: "反传统者" },
+                    { english: "idiosyncratic", chinese: "特质的" }
+                ],
+                // ... 28 more hard sets would be added here
+            ]
+        };
 
+        // Game state
+        const gameState = {
+            selectedCards: [],
+            matchedPairs: [],
+            score: 0,
+            remainingPairs: 20,
+            timer: 0,
+            timerInterval: null,
+            canClick: true,
+            gameStartTime: null,
+            moves: 0,
+            currentSet: 0,
+            currentDifficulty: 'easy',
+            setIndex: 0
+        };
+
+        // DOM elements
+        const elements = {
+            englishColumn: document.getElementById('englishColumn'),
+            chineseColumn: document.getElementById('chineseColumn'),
+            scoreElement: document.getElementById('score'),
+            remainingElement: document.getElementById('remaining'),
+            timerElement: document.getElementById('timer'),
+            newGameBtn: document.getElementById('newGameBtn'),
+            nextSetBtn: document.getElementById('nextSetBtn'),
+            easyBtn: document.getElementById('easyBtn'),
+            mediumBtn: document.getElementById('mediumBtn'),
+            hardBtn: document.getElementById('hardBtn'),
+            progressBar: document.getElementById('progressBar'),
+            messageElement: document.getElementById('message'),
+            messageTitle: document.getElementById('messageTitle'),
+            messageText: document.getElementById('messageText'),
+            messageStats: document.getElementById('messageStats'),
+            messageBtn: document.getElementById('messageBtn'),
+            currentSetDisplay: document.getElementById('currentSet'),
+            totalSetsDisplay: document.getElementById('totalSets')
+        };
+
+        // Initialize game
+        function initGame() {
+            // Reset game state
+            Object.assign(gameState, {
+                selectedCards: [],
+                matchedPairs: [],
+                score: 0,
+                remainingPairs: 20,
+                timer: 0,
+                canClick: true,
+                gameStartTime: null,
+                moves: 0,
+                setIndex: (gameState.setIndex + 1) % wordSets[gameState.currentDifficulty].length
+            });
+
+            // Update UI
+            elements.scoreElement.textContent = gameState.score;
+            elements.remainingElement.textContent = gameState.remainingPairs;
+            updateTimerDisplay();
+            elements.progressBar.style.width = '0%';
+            elements.currentSetDisplay.textContent = gameState.setIndex + 1;
+            elements.totalSetsDisplay.textContent = wordSets[gameState.currentDifficulty].length;
+
+            // Clear game board
+            elements.englishColumn.innerHTML = '';
+            elements.chineseColumn.innerHTML = '';
+
+            // Start timer
+            startTimer();
+
+            // Prepare cards
+            prepareCards();
+        }
+
+        // Change difficulty level
+        function changeDifficulty(difficulty) {
+            gameState.currentDifficulty = difficulty;
+            gameState.setIndex = 0;
+            
+            // Update active button
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`${difficulty}Btn`).classList.add('active');
+            
+            // Start new game with new difficulty
+            initGame();
+        }
+
+        // Prepare cards for the game (all face-up)
+        function prepareCards() {
+            // Get current word set based on difficulty
+            const currentWordSet = wordSets[gameState.currentDifficulty][gameState.setIndex];
+            
+            // Shuffle the word pairs
+            const shuffledPairs = [...currentWordSet].sort(() => Math.random() - 0.5);
+            
+            // Create English cards
+            shuffledPairs.forEach((word, index) => {
+                const englishCard = createCard(word.english, 'english', word.english);
+                elements.englishColumn.appendChild(englishCard);
+            });
+            
+            // Shuffle again for Chinese cards
+            const shuffledChinese = [...shuffledPairs].sort(() => Math.random() - 0.5);
+            
+            // Create Chinese cards
+            shuffledChinese.forEach((word, index) => {
+                const chineseCard = createCard(word.chinese, 'chinese', word.english);
+                chineseCard.classList.add('chinese-font');
+                elements.chineseColumn.appendChild(chineseCard);
+            });
+        }
+
+        // Create a card element
+        function createCard(content, type, pairId) {
+            const cardElement = document.createElement('div');
+            cardElement.className = `card ${type === 'english' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'} rounded-lg shadow-md p-1 cursor-pointer h-16 flex items-center justify-center`;
+            cardElement.dataset.pairId = pairId;
+            cardElement.dataset.type = type;
+            
+            cardElement.innerHTML = `
+                <div class="card-content font-medium text-center">${content}</div>
+            `;
+            
+            cardElement.addEventListener('click', () => handleCardClick(cardElement));
+            return cardElement;
+        }
+
+        // Handle card click
+        function handleCardClick(cardElement) {
+            // If we can't click or card is already matched, return
+            if (!gameState.canClick || cardElement.classList.contains('matched')) {
+                return;
+            }
+
+            // Record game start time on first move
+            if (gameState.moves === 0) {
+                gameState.gameStartTime = performance.now();
+            }
+            gameState.moves++;
+
+            // If it's the first card selected
+            if (gameState.selectedCards.length === 0) {
+                cardElement.classList.add('selected');
+                gameState.selectedCards.push(cardElement);
+            } 
+            // If it's the second card selected
+            else if (gameState.selectedCards.length === 1 && !gameState.selectedCards.includes(cardElement)) {
+                cardElement.classList.add('selected');
+                gameState.selectedCards.push(cardElement);
+                gameState.canClick = false;
+                
+                // Check if they match
+                setTimeout(() => checkForMatch(), 500);
+            }
+        }
+
+        // Check if selected cards match
+        function checkForMatch() {
+            const [firstCard, secondCard] = gameState.selectedCards;
+            
+            // If they match (same pairId but different types)
+            if (firstCard.dataset.pairId === secondCard.dataset.pairId && 
+                firstCard.dataset.type !== secondCard.dataset.type) {
+                
+                // Add matched class to both cards
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                
+                // Update game state
+                gameState.matchedPairs.push(firstCard.dataset.pairId);
+                gameState.score += 10;
+                gameState.remainingPairs--;
+                
+                // Update UI
+                elements.scoreElement.textContent = gameState.score;
+                elements.remainingElement.textContent = gameState.remainingPairs;
+                elements.progressBar.style.width = `${((40 - (gameState.remainingPairs * 2)) / 40) * 100}%`;
+                
+                // Check if game is over
+                if (gameState.remainingPairs === 0) {
+                    endGame(true);
+                }
+            } 
+            // If they don't match
+            else {
+                // Remove selection
+                firstCard.classList.remove('selected');
+                secondCard.classList.remove('selected');
+                
+                // Penalty for wrong match
+                gameState.score = Math.max(0, gameState.score - 2);
+                elements.scoreElement.textContent = gameState.score;
+            }
+            
+            // Reset selection
+            gameState.selectedCards = [];
+            gameState.canClick = true;
+        }
+
+        // Start timer
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            gameState.timer = 0;
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(gameState.timer / 60);
+            const seconds = gameState.timer % 60;
+            elements.timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // End game
+        function endGame(isWin) {
+            clearInterval(gameState.timerInterval);
+            
+            const endTime = performance.now();
+            const timeTaken = gameState.gameStartTime ? ((endTime - gameState.gameStartTime) / 1000).toFixed(1) : 0;
+            
+            if (isWin) {
+                showMessage(
+                    'Congratulations!', 
+                    `You've matched all word pairs successfully!`,
+                    'fa-trophy',
+                    `Score: ${gameState.score}<br>
+                     Time: ${formatTime(gameState.timer)}<br>
+                     Moves: ${gameState.moves}<br>
+                     Accuracy: ${Math.round((20 / gameState.moves) * 100)}%`
+                );
+            }
+        }
+
+        // Show message
+        function showMessage(title, text, iconClass, stats = '') {
+            elements.messageTitle.innerHTML = `<i class="fas ${iconClass} mr-2"></i>${title}`;
+            elements.messageText.innerHTML = text;
+            elements.messageStats.innerHTML = stats;
+            elements.messageElement.classList.remove('hidden');
+        }
+
+        // Format time
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}m ${secs}s`;
+        }
+
+        // Event listeners
+        elements.newGameBtn.addEventListener('click', initGame);
+        elements.nextSetBtn.addEventListener('click', initGame);
+        elements.easyBtn.addEventListener('click', () => changeDifficulty('easy'));
+        elements.mediumBtn.addEventListener('click', () => changeDifficulty('medium'));
+        elements.hardBtn.addEventListener('click', () => changeDifficulty('hard'));
+        elements.messageBtn.addEventListener('click', () => {
+            elements.messageElement.classList.add('hidden');
+            initGame();
+        });
+
+        // Start the game
+        initGame();
+    </script>
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=phonecardcgc/word" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</html>
 
